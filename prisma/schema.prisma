@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// =======================
+// Models
+// =======================
+
+
+// =======================
+// REPORTS
+// =======================
+
+
+model Report {
+  id              Int       @id @default(autoincrement())
+  type            String
+  description     String
+  submittedById   Int
+  submittedByRole String
+  startingStation String
+  destinationStation String
+  locationPoint   Bytes    
+  locationRegion  String
+  locationCity    String
+  dateTime        DateTime  @default(now())
+  status          String
+  assignedTo      Int?
+  attachments     String? 
+ 
+  submittedBy     User?     @relation(fields: [submittedById], references: [id])
+}
+
+
+// =======================
+// ADMIN
+// =======================
+
+model Admin {
+  id          Int    @id @default(autoincrement())
+  fullName    String
+  username    String @unique
+  password    String
+  email       String @unique
+  phoneNumber String
+}
+
+// =======================
+// BUS STATIONS
+// =======================
+
+
+
+model BusStation {
+  id            Int    @id @default(autoincrement())
+  stationName   String
+  username      String @unique
+  password      String
+  email         String @unique
+  phoneNumber   String
+  assignedTasks String?
+  status        String
+  location      String
+}
+
+// =======================
+// USERS
+// =======================
+
+model User {
+  id            Int    @id @default(autoincrement())
+  licenceId     String @unique
+  role          String
+  fullName      String
+  username      String @unique
+  email         String @unique
+  phoneNumber   String
+  password      String
+  assignedTask  String?
+  status        String
+  location      String
+
+
+  reports       Report[]
+}
