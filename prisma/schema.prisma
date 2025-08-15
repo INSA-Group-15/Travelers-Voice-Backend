@@ -90,7 +90,7 @@ model User {
   phoneNumber   String
   password      String
   assignedTask  String?
-  status        String
+  status        String?
   location      String
 
 
