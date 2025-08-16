@@ -13,7 +13,6 @@ const router = express.Router();
 //     ADMIN
 //======================
 router.post("/register/admin", async (req, res) => {
-  res.send({ message: "I am fine" });
   const { fullName, username, password, email, phoneNumber } = req.body;
 
   // Input validation
@@ -41,7 +40,7 @@ router.post("/register/admin", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    res.json(token);
+    return res.json(token);
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
@@ -49,7 +48,7 @@ router.post("/register/admin", async (req, res) => {
         .status(409)
         .json({ message: "Username or email already exists" });
     }
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
@@ -58,7 +57,6 @@ router.post("/register/admin", async (req, res) => {
 //======================
 
 router.post("/register/user", async (req, res) => {
-  res.send({ message: "I am fine" });
   const {
     licenceId,
     role,
@@ -97,6 +95,7 @@ router.post("/register/user", async (req, res) => {
         phoneNumber,
         password: hashedPassword,
         location,
+        status: "active", // Set default status
       },
     });
 
@@ -107,7 +106,7 @@ router.post("/register/user", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    res.json(token);
+    return res.json(token);
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
@@ -115,7 +114,7 @@ router.post("/register/user", async (req, res) => {
         .status(409)
         .json({ message: "Username, email, or licence ID already exists" });
     }
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
@@ -124,7 +123,6 @@ router.post("/register/user", async (req, res) => {
 //======================
 
 router.post("/register/busstation", async (req, res) => {
-  res.send({ message: "I am fine" });
   const { stationName, username, password, email, phoneNumber, location } =
     req.body;
 
@@ -151,6 +149,7 @@ router.post("/register/busstation", async (req, res) => {
         email,
         phoneNumber,
         location,
+        status: "active", // Set default status
       },
     });
 
@@ -161,7 +160,7 @@ router.post("/register/busstation", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
-    res.json(token);
+    return res.json(token);
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
@@ -169,7 +168,7 @@ router.post("/register/busstation", async (req, res) => {
         .status(409)
         .json({ message: "Username or email already exists" });
     }
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
@@ -181,7 +180,6 @@ router.post("/register/busstation", async (req, res) => {
 //     ADMIN
 //======================
 router.post("/login/admin", async (req, res) => {
-  res.send({ message: "I am fine" });
   const { username, password } = req.body;
 
   // Input validation
@@ -211,10 +209,10 @@ router.post("/login/admin", async (req, res) => {
     const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    res.json({ token });
+    return res.json({ token });
   } catch (err) {
     console.log(err.message);
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
@@ -223,7 +221,6 @@ router.post("/login/admin", async (req, res) => {
 //======================
 
 router.post("/login/user", async (req, res) => {
-  res.send({ message: "I am fine" });
   const { username, password } = req.body;
 
   // Input validation
@@ -253,10 +250,10 @@ router.post("/login/user", async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    res.json({ token });
+    return res.json({ token });
   } catch (err) {
     console.log(err.message);
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
@@ -265,7 +262,6 @@ router.post("/login/user", async (req, res) => {
 //======================
 
 router.post("/login/busstation", async (req, res) => {
-  res.send({ message: "I am fine" });
   const { username, password } = req.body;
 
   // Input validation
@@ -295,13 +291,13 @@ router.post("/login/busstation", async (req, res) => {
     const token = jwt.sign({ id: busStation.id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
-    res.json({ token });
+    return res.json({ token });
   } catch (err) {
     console.log(err.message);
-    res.sendStatus(503);
+    return res.sendStatus(503);
   }
 });
 
 export default router;
 
-res.send({ message: "I am fine" });
+// res.send({message: "I am fine"})

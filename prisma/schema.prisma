@@ -10,8 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 
@@ -90,7 +90,7 @@ model User {
   phoneNumber   String
   password      String
   assignedTask  String?
-  status        String?
+  status        String
   location      String
 
 
