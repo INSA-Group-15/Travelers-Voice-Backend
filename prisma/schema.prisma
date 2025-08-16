@@ -56,7 +56,8 @@ model Admin {
   password    String
   email       String @unique
   phoneNumber String
-}
+  role        Role    @default(ADMIN)
+ }
 
 // =======================
 // BUS STATIONS
@@ -74,6 +75,7 @@ model BusStation {
   assignedTasks String?
   status        String
   location      String
+  role          Role   @default(MANAGER)
 }
 
 // =======================
@@ -83,7 +85,7 @@ model BusStation {
 model User {
   id            Int    @id @default(autoincrement())
   licenceId     String @unique
-  role          String
+  role          Role @default(USER)
   fullName      String
   username      String @unique
   email         String @unique
@@ -95,4 +97,14 @@ model User {
 
 
   reports       Report[]
+}
+
+
+
+
+enum Role {
+   ADMIN
+   USER
+   MANAGER
+   GUEST
 }

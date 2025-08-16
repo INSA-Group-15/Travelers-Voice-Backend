@@ -111,7 +111,7 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [x] Implement user registration (Admin, Bus Station, Traffic Officer)
 - [x] Implement login route with JWT token generation
 - [ ] Set up role-based access control
-- [ ] Add **helmet** for HTTP header security
+- [x] Add **helmet** for HTTP header security
 - [ ] Add **CORS** for cross-origin requests
 
 ---

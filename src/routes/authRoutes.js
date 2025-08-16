@@ -15,7 +15,6 @@ const router = express.Router();
 router.post("/register/admin", async (req, res) => {
   const { fullName, username, password, email, phoneNumber } = req.body;
 
-  // Input validation
   if (!fullName || !username || !password || !email || !phoneNumber) {
     return res.status(400).json({ message: "All fields are required" });
   }
@@ -30,6 +29,7 @@ router.post("/register/admin", async (req, res) => {
         password: hashedPassword,
         email,
         phoneNumber,
+        role: "ADMIN",
       },
     });
 
@@ -68,7 +68,6 @@ router.post("/register/user", async (req, res) => {
     location,
   } = req.body;
 
-  // Input validation
   if (
     !licenceId ||
     !role ||
@@ -95,7 +94,8 @@ router.post("/register/user", async (req, res) => {
         phoneNumber,
         password: hashedPassword,
         location,
-        status: "active", // Set default status
+        status: "active",
+        role: "USER",
       },
     });
 
@@ -126,7 +126,6 @@ router.post("/register/busstation", async (req, res) => {
   const { stationName, username, password, email, phoneNumber, location } =
     req.body;
 
-  // Input validation
   if (
     !stationName ||
     !username ||
@@ -149,7 +148,8 @@ router.post("/register/busstation", async (req, res) => {
         email,
         phoneNumber,
         location,
-        status: "active", // Set default status
+        status: "active",
+        role: "MANAGER",
       },
     });
 
@@ -182,7 +182,6 @@ router.post("/register/busstation", async (req, res) => {
 router.post("/login/admin", async (req, res) => {
   const { username, password } = req.body;
 
-  // Input validation
   if (!username || !password) {
     return res
       .status(400)
@@ -223,7 +222,6 @@ router.post("/login/admin", async (req, res) => {
 router.post("/login/user", async (req, res) => {
   const { username, password } = req.body;
 
-  // Input validation
   if (!username || !password) {
     return res
       .status(400)
@@ -264,7 +262,6 @@ router.post("/login/user", async (req, res) => {
 router.post("/login/busstation", async (req, res) => {
   const { username, password } = req.body;
 
-  // Input validation
   if (!username || !password) {
     return res
       .status(400)

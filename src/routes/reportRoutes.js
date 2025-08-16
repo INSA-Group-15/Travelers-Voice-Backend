@@ -2,12 +2,12 @@ import express from "express";
 import prisma from "../prismaClient.js";
 
 // ===================
-//  ccreatignng repo
+//  creating reports
 //======================
 
 const router = express.Router();
 
-router.post("/reportissue", (req, res) => {
+router.post("/reports", async (req, res) => {
   const {
     type,
     description,
@@ -35,7 +35,7 @@ router.post("/reportissue", (req, res) => {
   }
 
   try {
-    prisma.report.create({
+    await prisma.report.create({
       data: {
         type,
         description,
@@ -56,14 +56,31 @@ router.post("/reportissue", (req, res) => {
   }
 });
 
-router.get("/reportissue", (req, res) => {
+// ===================
+//  reading the reports
+//======================
+router.get("/reports", async (req, res) => {
   try {
-    const reports = prisma.report.findMany();
+    const reports = await prisma.report.findMany();
     return res.json(reports);
   } catch (err) {
     console.log(err.message);
     return res.sendStatus(503);
   }
+});
+
+// ===================
+//  Updating the reports
+//======================
+
+router.put("/reports:id", async (req, res) => {
+const id = req.params
+const report 
+
+
+
+
+
 });
 
 export default router;
