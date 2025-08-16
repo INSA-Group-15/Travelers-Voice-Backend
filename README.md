@@ -100,7 +100,7 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [x] Create Admin table in Prisma schema
 - [x] Create Bus Stations table in Prisma schema
 - [x] Create Traffic Officers table in Prisma schema
-- [x] Run initial database migration
+- [ ] Run initial database migration
 
 ---
 
