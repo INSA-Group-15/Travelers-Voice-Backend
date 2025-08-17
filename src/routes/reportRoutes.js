@@ -1,5 +1,5 @@
 import express from "express";
-import prisma from "../prismaClient.js";
+import prisma from "../config/prismaClient.js";
 
 // ===================
 //  creating reports
@@ -74,13 +74,17 @@ router.get("/reports", async (req, res) => {
 //======================
 
 router.put("/reports:id", async (req, res) => {
-const id = req.params
-const report 
+  const { status } = req.body;
 
-
-
-
-
+  const id = req.params;
+  const report = prisma.report.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      status,
+    },
+  });
 });
 
 export default router;

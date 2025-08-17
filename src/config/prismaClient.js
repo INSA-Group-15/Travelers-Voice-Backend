@@ -1,11 +1,9 @@
-import { PrismaClient } from "./generated/prisma/index.js";
+import { PrismaClient } from "../generated/prisma/index.js";
 
 const prisma = new PrismaClient({
-  // Add connection pooling for better performance
   log: ["query", "info", "warn", "error"],
 });
 
-// Handle graceful shutdown
 process.on("beforeExit", async () => {
   await prisma.$disconnect();
 });

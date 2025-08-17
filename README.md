@@ -45,8 +45,8 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 | **Database ORM**  | Prisma                         | ✅   |
 | **Security**      | bcrypt                         | ✅   |
 |                   | jsonwebtoken (JWT)             | ✅   |
-|                   | helmet                         |      |
-|                   | cors                           |      |
+|                   | helmet                         | ✅   |
+|                   | cors                           | ✅   |
 | **File Uploads**  | multer                         |      |
 | **Geolocation**   | postgis (PostgreSQL extension) |      |
 | **Email/SMS**     | Nodemailer                     |      |
@@ -70,10 +70,10 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [ ] **A04:2021 – Insecure Design**
 - [ ] **A05:2021 – Security Misconfiguration**
 - [ ] **A06:2021 – Vulnerable and Outdated Components**
-- [ ] **A07:2021 – Identification and Authentication Failures**
+- [x] **A07:2021 – Identification and Authentication Failures**
 - [ ] **A08:2021 – Software and Data Integrity Failures**
-- [ ] **A09:2021 – Security Logging and Monitoring Failures**
-- [ ] **A10:2021 – Server-Side Request Forgery (SSRF)**
+- [x] **A09:2021 – Security Logging and Monitoring Failures**
+- [x] **A10:2021 – Server-Side Request Forgery (SSRF)**
 
 ## Roadmap and check lists
 
@@ -85,7 +85,7 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [x] Install pg for PostgreSQL connection
 - [x] Install Prisma and initialize schema
 - [x] Install dotenv for environment variables
-- [ ] Configure environment variables file
+- [x] Configure environment variables file
   - [x] Database URL
   - [x] JWT secret
   - [ ] Email & SMS API credentials
@@ -100,7 +100,7 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [x] Create Admin table in Prisma schema
 - [x] Create Bus Stations table in Prisma schema
 - [x] Create Traffic Officers table in Prisma schema
-- [ ] Run initial database migration
+- [x] Run initial database migration
 
 ---
 
@@ -110,20 +110,20 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [x] Install jsonwebtoken for authentication
 - [x] Implement user registration (Admin, Bus Station, Traffic Officer)
 - [x] Implement login route with JWT token generation
-- [ ] Set up role-based access control
+- [x] Set up role-based access control
 - [x] Add **helmet** for HTTP header security
-- [ ] Add **CORS** for cross-origin requests
+- [x] Add **CORS** for cross-origin requests
 
 ---
 
 ### **4️⃣ API Endpoints**
 
-- [ ] Implement Reports CRUD endpoints
+- [x] Implement Reports CRUD endpoints
 - [ ] Create admin management endpoints
 - [ ] Create bus station endpoints
 - [ ] Create traffic officer endpoints
 - [ ] Implement report assignment functionality
-- [ ] Add status update endpoints
+- [x] Add status update endpoints
 
 ---
 

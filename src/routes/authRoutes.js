@@ -1,7 +1,12 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import prisma from "../prismaClient.js";
+import {
+  generateAccessToken,
+  hashPassword,
+  verifyPassword,
+} from "../utils/utils.js";
+import prisma from "../config/prismaClient.js";
 
 const router = express.Router();
 
@@ -20,7 +25,7 @@ router.post("/register/admin", async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 6);
+    const hashedPassword = hashPassword(password);
 
     const admin = await prisma.admin.create({
       data: {
@@ -33,13 +38,8 @@ router.post("/register/admin", async (req, res) => {
       },
     });
 
-    const token = jwt.sign(
-      {
-        id: admin.id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = generateAccessToken(admin.id, admin.role);
+
     return res.json(token);
   } catch (err) {
     console.log(err.message);
@@ -82,7 +82,7 @@ router.post("/register/user", async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 6);
+    const hashedPassword = hashPassword(password);
 
     const newUser = await prisma.user.create({
       data: {
@@ -99,13 +99,7 @@ router.post("/register/user", async (req, res) => {
       },
     });
 
-    const token = jwt.sign(
-      {
-        id: newUser.id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    const token = generateAccessToken(newUser.id, newUser.role);
     return res.json(token);
   } catch (err) {
     console.log(err.message);
@@ -138,7 +132,7 @@ router.post("/register/busstation", async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 6);
+    const hashedPassword = hashPassword(password);
 
     const newBusStation = await prisma.busStation.create({
       data: {
@@ -152,14 +146,8 @@ router.post("/register/busstation", async (req, res) => {
         role: "MANAGER",
       },
     });
+    const token = generateAccessToken(newBusStation.id, newBusStation.role);
 
-    const token = jwt.sign(
-      {
-        id: newBusStation.id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
     return res.json(token);
   } catch (err) {
     console.log(err.message);
@@ -173,7 +161,11 @@ router.post("/register/busstation", async (req, res) => {
 });
 
 // ===================
+// ===================
+// ===================
 //  LOGIN Routes
+//======================
+//======================
 //======================
 
 // ===================
@@ -199,15 +191,14 @@ router.post("/login/admin", async (req, res) => {
       return res.status(404).send({ message: "Admin not found" });
     }
 
-    const passwordIsValid = await bcrypt.compare(password, admin.password);
+    const passwordIsValid = verifyPassword(password, admin.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    const token = generateAccessToken(admin.id, admin.role);
+
     return res.json({ token });
   } catch (err) {
     console.log(err.message);
@@ -239,15 +230,13 @@ router.post("/login/user", async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    const passwordIsValid = await bcrypt.compare(password, user.password);
+    const passwordIsValid = verifyPassword(password, user.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    const token = generateAccessToken(user.id, user.role);
     return res.json({ token });
   } catch (err) {
     console.log(err.message);
@@ -279,15 +268,13 @@ router.post("/login/busstation", async (req, res) => {
       return res.status(404).send({ message: "Bus station not found" });
     }
 
-    const passwordIsValid = await bcrypt.compare(password, busStation.password);
+    const passwordIsValid = verifyPassword(password, busStation.password);
 
     if (!passwordIsValid) {
       return res.status(401).send({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: busStation.id }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    const token = generateAccessToken(busStation.id, busStation.role);
     return res.json({ token });
   } catch (err) {
     console.log(err.message);
