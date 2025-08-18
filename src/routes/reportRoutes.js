@@ -1,90 +1,21 @@
 import express from "express";
-import prisma from "../config/prismaClient.js";
 
-// ===================
-//  creating reports
-//======================
+import {
+  createReport,
+  readAllReports,
+  updateReportStatus,
+  deleteReport,
+} from "../controllers/reportController.js";
 
 const router = express.Router();
 
-router.post("/reports", async (req, res) => {
-  const {
-    type,
-    description,
-    submittedById,
-    submittedByRole,
-    startingStation,
-    destinationStation,
-    locationPoint,
-    locationRegion,
-    locationCity,
-    status,
-    attachments,
-  } = req.body;
+//  CRUD endpoints for report
+router.post("/reports", createReport);
 
-  if (
-    !type ||
-    !description ||
-    !submittedById ||
-    !locationPoint ||
-    !locationRegion ||
-    !locationCity ||
-    !attachments
-  ) {
-    return res.json({ message: "Incomplete Data" });
-  }
+router.get("/reports/all", readAllReports);
 
-  try {
-    await prisma.report.create({
-      data: {
-        type,
-        description,
-        submittedById,
-        submittedByRole,
-        startingStation,
-        destinationStation,
-        locationPoint,
-        locationRegion,
-        locationCity,
-        status,
-        attachments,
-      },
-    });
-  } catch (err) {
-    console.log(err.message);
-    return res.sendStatus(503);
-  }
-});
+router.put("/reports/:id", updateReportStatus);
 
-// ===================
-//  reading the reports
-//======================
-router.get("/reports", async (req, res) => {
-  try {
-    const reports = await prisma.report.findMany();
-    return res.json(reports);
-  } catch (err) {
-    console.log(err.message);
-    return res.sendStatus(503);
-  }
-});
-
-// ===================
-//  Updating the reports
-//======================
-
-router.put("/reports:id", async (req, res) => {
-  const { status } = req.body;
-
-  const id = req.params;
-  const report = prisma.report.update({
-    where: {
-      id: parseInt(id),
-    },
-    data: {
-      status,
-    },
-  });
-});
+router.delete("/reports/:id", deleteReport);
 
 export default router;
