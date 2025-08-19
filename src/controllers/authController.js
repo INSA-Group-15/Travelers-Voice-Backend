@@ -13,10 +13,10 @@ import {
 //     ADMIN
 //======================
 export const registerAdmin = async (req, res) => {
-  const {fullName, username, password, email, phoneNumber} = req.body;
+  const { fullName, username, password, email, phoneNumber } = req.body;
 
   if (!fullName || !username || !password || !email || !phoneNumber) {
-    return res.status(400).json({message: "All fields are required"});
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
@@ -40,13 +40,13 @@ export const registerAdmin = async (req, res) => {
       path: "/refresh-token",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
       return res
         .status(409)
-        .json({message: "Username or email already exists"});
+        .json({ message: "Username or email already exists" });
     }
     return res.sendStatus(503);
   }
@@ -75,7 +75,7 @@ export const registerUser = async (req, res) => {
     !password ||
     !location
   ) {
-    return res.status(400).json({message: "All fields are required"});
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
@@ -102,13 +102,13 @@ export const registerUser = async (req, res) => {
       path: "/refreshToken",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
       return res
         .status(409)
-        .json({message: "Username, email, or licence ID already exists"});
+        .json({ message: "Username, email, or licence ID already exists" });
     }
     return res.sendStatus(503);
   }
@@ -119,7 +119,7 @@ export const registerUser = async (req, res) => {
 //======================
 
 export const registerBusStationManager = async (req, res) => {
-  const {stationName, username, password, email, phoneNumber, location} =
+  const { stationName, username, password, email, phoneNumber, location } =
     req.body;
 
   if (
@@ -130,7 +130,7 @@ export const registerBusStationManager = async (req, res) => {
     !phoneNumber ||
     !location
   ) {
-    return res.status(400).json({message: "All fields are required"});
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
@@ -154,13 +154,13 @@ export const registerBusStationManager = async (req, res) => {
       path: "/refreshToken",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     if (err.code === "P2002") {
       return res
         .status(409)
-        .json({message: "Username or email already exists"});
+        .json({ message: "Username or email already exists" });
     }
     return res.sendStatus(503);
   }
@@ -178,12 +178,12 @@ export const registerBusStationManager = async (req, res) => {
 //     ADMIN
 //======================
 export const loginAdmin = async (req, res) => {
-  const {username, password} = req.body;
+  const { username, password } = req.body;
 
   if (!username || !password) {
     return res
       .status(400)
-      .json({message: "Username and password are required"});
+      .json({ message: "Username and password are required" });
   }
 
   try {
@@ -194,13 +194,13 @@ export const loginAdmin = async (req, res) => {
     });
 
     if (!admin) {
-      return res.status(404).send({message: "Admin not found"});
+      return res.status(404).send({ message: "Admin not found" });
     }
 
     const passwordIsValid = await verifyPassword(password, admin.password);
 
     if (!passwordIsValid) {
-      return res.status(401).send({message: "Invalid password"});
+      return res.status(401).send({ message: "Invalid password" });
     }
 
     const token = generateTokenPair(admin.id, admin.role);
@@ -210,7 +210,7 @@ export const loginAdmin = async (req, res) => {
       path: "/refreshToken",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     return res.sendStatus(503);
@@ -222,12 +222,12 @@ export const loginAdmin = async (req, res) => {
 //======================
 
 export const loginUser = async (req, res) => {
-  const {username, password} = req.body;
+  const { username, password } = req.body;
 
   if (!username || !password) {
     return res
       .status(400)
-      .json({message: "Username and password are required"});
+      .json({ message: "Username and password are required" });
   }
 
   try {
@@ -238,13 +238,13 @@ export const loginUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).send({message: "User not found"});
+      return res.status(404).send({ message: "User not found" });
     }
 
     const passwordIsValid = await verifyPassword(password, user.password);
 
     if (!passwordIsValid) {
-      return res.status(401).send({message: "Invalid password"});
+      return res.status(401).send({ message: "Invalid password" });
     }
 
     const token = generateTokenPair(user.id, user.role);
@@ -254,7 +254,7 @@ export const loginUser = async (req, res) => {
       path: "/refreshToken",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     return res.sendStatus(503);
@@ -266,12 +266,12 @@ export const loginUser = async (req, res) => {
 //======================
 
 export const loginBusStationManager = async (req, res) => {
-  const {username, password} = req.body;
+  const { username, password } = req.body;
 
   if (!username || !password) {
     return res
       .status(400)
-      .json({message: "Username and password are required"});
+      .json({ message: "Username and password are required" });
   }
 
   try {
@@ -282,13 +282,13 @@ export const loginBusStationManager = async (req, res) => {
     });
 
     if (!busStation) {
-      return res.status(404).send({message: "Bus station not found"});
+      return res.status(404).send({ message: "Bus station not found" });
     }
 
     const passwordIsValid = await verifyPassword(password, busStation.password);
 
     if (!passwordIsValid) {
-      return res.status(401).send({message: "Invalid password"});
+      return res.status(401).send({ message: "Invalid password" });
     }
 
     const token = generateTokenPair(busStation.id, busStation.role);
@@ -298,7 +298,7 @@ export const loginBusStationManager = async (req, res) => {
       path: "/refreshToken",
     });
 
-    return res.json({accessToken: token.accessToken});
+    return res.json({ accessToken: token.accessToken });
   } catch (err) {
     console.log(err.message);
     return res.sendStatus(503);

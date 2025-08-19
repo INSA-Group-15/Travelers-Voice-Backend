@@ -1,6 +1,6 @@
 # Travelers-Voice-Backend
 
-Backend API for managing traffic reports, bus stations, and user roles (Admin, Traffic Officers).  
+Backend API for managing traffic reports, bus stations, and user roles (Admin, Traffic Officers). This system allows anyone (guests or registered users) to submit reports, which can be assigned to traffic officers or bus stations for handling.
 Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostGIS** for geospatial location data.
 
 ---
@@ -11,12 +11,26 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 
 ## Features
 
-- JWT-based authentication & role-based access control.
-- Traffic report management (with geospatial location support via PostGIS).
-- Admin, Bus Station, and Traffic Officer user management.
-- File uploads for report attachments.
-- Secure database access with Prisma ORM.
+### Core Functionality
+
+- **Guest Report Submission** - Anyone can submit reports without registration
+- **User Authentication** - Secure login for all user types
+- **Role-Based Access** - Different permissions for different user roles
+- **File Uploads** - Support for images, videos, and PDFs
+- **Geographic Data** - Location tracking with PostGIS
+- **Report Assignment** - Assign reports to traffic officers or bus stations
+- **Status Management** - Track report status (pending, in_progress, resolved, rejected)
+
+### Security Features
+
 - OWASP Top 10 backend security practices.
+- JWT Authentication with refresh tokens
+- Password hashing with bcrypt
+- Rate limiting to prevent abuse
+- Input validation with Joi
+- CORS configuration
+- Helmet for HTTP security headers
+- File upload validation
 
 ---
 
@@ -28,10 +42,26 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - **ORM**: Prisma
 - **Auth**: JSON Web Tokens (JWT)
 - **Validation**: Joi / Zod
-- **File Uploads**: Multer / Cloud Storage (configurable)
+- **File Uploads**: Multer + Cloudinary with file type validation
 - **Security**: Helmet, CORS, bcrypt, rate-limiter-flexible
 
 ---
+
+## Roles
+
+- **Admin** - Full system management
+- **Traffic Officer (User)** - Handle assigned reports
+- **Bus Station** - Handle assigned reports
+- **Guest** - Submit reports without registration
+
+### Role-Based Permissions
+
+| Role        | Can Submit Reports | Can View Reports | Can Update Reports | Can Assign Reports | Can Manage Users |
+| ----------- | ------------------ | ---------------- | ------------------ | ------------------ | ---------------- |
+| Guest       | ✅                 | Limited (own)    | ❌                 | ❌                 | ❌               |
+| User        | ✅                 | Assigned + Own   | Assigned + Own     | ❌                 | ❌               |
+| Bus Station | ✅                 | Assigned         | Assigned           | ❌                 | ❌               |
+| Admin       | ✅                 | All              | All                | ✅                 | ✅               |
 
 ## Backend Tools checklist
 
@@ -51,8 +81,6 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 | **Geolocation**   | postgis (PostgreSQL extension) |      |
 | **Email/SMS**     | Nodemailer                     |      |
 |                   | Twilio Free Tier               |      |
-| **Development**   | morgan                         |      |
-|                   | express-async-errors           |      |
 | **Validation**    | zod                            |      |
 | **Documentation** | swagger-ui-express             |      |
 |                   | yamljs                         |      |
@@ -69,7 +97,7 @@ Built with **Node.js**, **Express**, **Prisma ORM**, **PostgreSQL**, and **PostG
 - [ ] **A03:2021 – Injection**
 - [ ] **A04:2021 – Insecure Design**
 - [ ] **A05:2021 – Security Misconfiguration**
-- [ ] **A06:2021 – Vulnerable and Outdated Components**
+- [x] **A06:2021 – Vulnerable and Outdated Components**
 - [x] **A07:2021 – Identification and Authentication Failures**
 - [ ] **A08:2021 – Software and Data Integrity Failures**
 - [x] **A09:2021 – Security Logging and Monitoring Failures**
