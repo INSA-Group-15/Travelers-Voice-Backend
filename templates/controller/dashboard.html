@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Traffic Controller Dashboard{% endblock %}
+
+{% block content %}
+<h1>🎯 Traffic Controller Dashboard</h1>
+
+<div id="userInfo" style="text-align: center; margin-bottom: 2rem;">
+    <p><strong>Welcome,</strong> <span id="userName"></span></p>
+    <p><strong>Role:</strong> <span id="userRole"></span></p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+    <div style="background: #e8f4fd; padding: 1rem; border-radius: 5px; text-align: center;">
+        <h3>Total Reports</h3>
+        <p id="totalReports" style="font-size: 2rem; font-weight: bold; color: #3498db;">0</p>
+    </div>
+    <div style="background: #fff8e1; padding: 1rem; border-radius: 5px; text-align: center;">
+        <h3>Pending Reports</h3>
+        <p id="pendingReports" style="font-size: 2rem; font-weight: bold; color: #f39c12;">0</p>
+    </div>
+</div>
+
+<div style="margin-bottom: 2rem;">
+    <h3>All Reports</h3>
+    <div id="reportsList" style="margin-top: 1rem;">
+        <p>Loading reports...</p>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <button onclick="logout()" class="logout-btn">Logout</button>
+</div>
+
+<script>
+    // Display user info
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        document.getElementById('userName').textContent = user.username;
+        document.getElementById('userRole').textContent = user.role;
+        
+        loadAllReports();
+    } else {
+        window.location.href = '/auth/login/';
+    }
+
+    async function loadAllReports() {
+        try {
+            const response = await fetch('/api/reports/');
+            const reports = await response.json();
+            
+            // Update counters
+            document.getElementById('totalReports').textContent = reports.length;
+            document.getElementById('pendingReports').textContent = 
+                reports.filter(r => r.status === 'pending').length;
+            
+            const reportsList = document.getElementById('reportsList');
+            
+            if (reports.length === 0) {
+                reportsList.innerHTML = '<p>No reports submitted yet.</p>';
+                return;
+            }
+            
+            reportsList.innerHTML = reports.map(report => `
+                <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 5px;">
+                    <h4>${report.title}</h4>
+                    <p><strong>FAN ID:</strong> ${report.fan_id}</p>
+                    <p><strong>Route:</strong> ${report.start_station} → ${report.end_station}</p>
+                    <p><strong>Description:</strong> ${report.description}</p>
+                    <p><strong>Status:</strong> <span style="color: ${getStatusColor(report.status)}">${report.status}</span></p>
+                    <p><strong>Area:</strong> ${report.start_station}</p>
+                    <p><strong>Created:</strong> ${new Date(report.created_at).toLocaleString()}</p>
+                    ${report.status === 'pending' ? 
+                        `<button onclick="assignReport('${report.id}')" style="background: #3498db;">Assign to Officer</button>` : 
+                        ''
+                    }
+                </div>
+            `).join('');
+        } catch (error) {
+            document.getElementById('reportsList').innerHTML = '<p>Error loading reports.</p>';
+        }
+    }
+
+    async function assignReport(reportId) {
+        // In a real app, you'd select an officer from a list
+        const officerId = prompt('Enter officer ID to assign this report:');
+        if (officerId) {
+            try {
+                const response = await fetch(`/api/reports/${reportId}/assign/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ officer_id: officerId })
+                });
+                
+                if (response.ok) {
+                    showSuccess('Report assigned successfully!');
+                    loadAllReports();
+                } else {
+                    showError('Failed to assign report');
+                }
+            } catch (error) {
+                showError('Network error');
+            }
+        }
+    }
+
+    function getStatusColor(status) {
+        switch(status) {
+            case 'pending': return '#e74c3c';
+            case 'solved': return '#27ae60';
+            case 'in_progress': return '#f39c12';
+            default: return '#666';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = '/auth/login/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Traffic Officer Dashboard{% endblock %}
+
+{% block content %}
+<h1>🚓 Traffic Officer Dashboard</h1>
+
+<div id="userInfo" style="text-align: center; margin-bottom: 2rem;">
+    <p><strong>Welcome,</strong> <span id="userName"></span></p>
+    <p><strong>Area:</strong> <span id="userArea"></span></p>
+    <p><strong>Role:</strong> <span id="userRole"></span></p>
+</div>
+
+<div style="margin-bottom: 2rem;">
+    <h3>Reports in Your Area</h3>
+    <div id="reportsList" style="margin-top: 1rem;">
+        <p>Loading reports...</p>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <button onclick="logout()" class="logout-btn">Logout</button>
+</div>
+
+<script>
+    // Display user info
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        document.getElementById('userName').textContent = user.username;
+        document.getElementById('userArea').textContent = user.area || 'Not assigned';
+        document.getElementById('userRole').textContent = user.role;
+        
+        // Load reports for officer's area
+        if (user.area) {
+            loadAreaReports(user.area);
+        }
+    } else {
+        window.location.href = '/auth/login/';
+    }
+
+    async function loadAreaReports(area) {
+        try {
+            const response = await fetch(`/api/reports/area/${area}/`);
+            const reports = await response.json();
+            
+            const reportsList = document.getElementById('reportsList');
+            
+            if (reports.length === 0) {
+                reportsList.innerHTML = '<p>No reports in your area.</p>';
+                return;
+            }
+            
+            reportsList.innerHTML = reports.map(report => `
+                <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 5px;">
+                    <h4>${report.title}</h4>
+                    <p><strong>FAN ID:</strong> ${report.fan_id}</p>
+                    <p><strong>Description:</strong> ${report.description}</p>
+                    <p><strong>Status:</strong> <span style="color: ${getStatusColor(report.status)}">${report.status}</span></p>
+                    <p><strong>Created:</strong> ${new Date(report.created_at).toLocaleString()}</p>
+                    ${report.status === 'pending' ? 
+                        `<button onclick="markSolved('${report.id}')" style="background: #27ae60;">Mark as Solved</button>` : 
+                        ''
+                    }
+                </div>
+            `).join('');
+        } catch (error) {
+            document.getElementById('reportsList').innerHTML = '<p>Error loading reports.</p>';
+        }
+    }
+
+    async function markSolved(reportId) {
+        try {
+            const response = await fetch(`/api/reports/${reportId}/solve/`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+            
+            if (response.ok) {
+                showSuccess('Report marked as solved!');
+                // Reload reports
+                const user = JSON.parse(localStorage.getItem('user'));
+                loadAreaReports(user.area);
+            } else {
+                showError('Failed to mark report as solved');
+            }
+        } catch (error) {
+            showError('Network error');
+        }
+    }
+
+    function getStatusColor(status) {
+        switch(status) {
+            case 'pending': return '#e74c3c';
+            case 'solved': return '#27ae60';
+            case 'in_progress': return '#f39c12';
+            default: return '#666';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        window.location.href = '/auth/login/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
